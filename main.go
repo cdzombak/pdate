@@ -53,11 +53,11 @@ func main() {
 	parsedUTC := parsed.In(utcLoc)
 
 	fmt.Printf(" input:\t%s\n", val)
-	fmt.Printf("parsed:\t%s\n", parsed.Format("2006-01-02 15:04:05.1234 MST"))
+	fmt.Printf("parsed:\t%s\n", parsed.Format("2006-01-02 15:04:05 MST"))
 	fmt.Println("       \t(verify this matches your input)")
 	fmt.Println("")
 	fmt.Printf("   UTC:\t%s\n", parsedUTC.Format("2006-01-02 3:04:05 PM"))
-	fmt.Printf("       \t%s\n", parsedUTC.Format("2006-01-02T15:04:05.1234Z"))
+	fmt.Printf("       \t%s\n", parsedUTC.Format("2006-01-02T15:04:05Z"))
 	fmt.Println("")
 	fmt.Printf(" local:\t%s\n", parsedLocal.Format("2006-01-02 3:04:05 PM MST"))
 	fmt.Printf("\t(%s)\n", timeago.English.Format(parsed))
