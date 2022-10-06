@@ -9,6 +9,7 @@ import (
 	"github.com/araddon/dateparse"
 )
 
+// Parse attempts to parse the given string into a time.Time.
 func Parse(val string) (time.Time, error) {
 	if unixTs, err := strconv.ParseInt(val, 10, 64); err == nil {
 		result := time.Unix(unixTs, 0)
