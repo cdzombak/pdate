@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/araddon/dateparse"
 	"github.com/xeonx/timeago"
 )
 
@@ -35,9 +34,9 @@ func main() {
 		}
 	}
 
-	parsed, err := dateparse.ParseStrict(val)
+	parsed, err := Parse(val)
 	if err != nil {
-		fmt.Printf("failed to parse input: %s\n", err)
+		fmt.Println("failed to parse input")
 		os.Exit(1)
 	}
 
