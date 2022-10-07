@@ -34,6 +34,7 @@ func main() {
 		}
 	}
 
+	val = strings.TrimSpace(val)
 	parsed, err := Parse(val)
 	if err != nil {
 		fmt.Println("failed to parse input")
