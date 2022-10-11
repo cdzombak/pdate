@@ -6,8 +6,6 @@ import (
 	"os"
 	"strings"
 	"time"
-
-	"github.com/xeonx/timeago"
 )
 
 var version = "<dev>"
@@ -61,5 +59,5 @@ func main() {
 	fmt.Printf("       \t%s\n", parsedUTC.Format("2006-01-02T15:04:05Z"))
 	fmt.Println("")
 	fmt.Printf(" local:\t%s\n", parsedLocal.Format("2006-01-02 3:04:05 PM MST"))
-	fmt.Printf("\t(%s)\n", timeago.English.Format(parsed))
+	fmt.Printf("\t(%s)\n", CustomEnglishTimeAgo.Format(parsed))
 }
