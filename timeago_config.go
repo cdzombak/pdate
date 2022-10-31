@@ -6,6 +6,7 @@ import (
 	"github.com/xeonx/timeago"
 )
 
+// CustomEnglishTimeAgo is the application's configuration for displaying "time ago" strings.
 var CustomEnglishTimeAgo = timeago.Config{
 	PastPrefix:   "",
 	PastSuffix:   " ago",
