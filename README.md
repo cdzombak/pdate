@@ -61,3 +61,7 @@ git clone https://github.com/cdzombak/dateutil.git
 cd dateutil
 make install
 ```
+
+## See Also
+
+- [clock.dzdz.cz](https://clock.dzdz.cz) displays the current time in UTC and your local timezone. [You can also install it using a trivial Electron wrapper.](https://github.com/cdzombak/clock/tree/master/app)
