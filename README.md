@@ -1,6 +1,6 @@
 # `dateutil`
 
-`dateutil` will attempt to parse a given date/time stamp string, trying different formats. Once it parses the timestamp, it presents the parsed timestamp in UTC and your local timezone.
+`dateutil` attempts to parse a given date/time stamp string, trying different formats. Once it parses the timestamp, it presents the parsed timestamp in UTC and your local timezone.
 
 ## Usage Examples
 
