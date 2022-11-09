@@ -27,5 +27,5 @@ build: lint ## Build (for the current platform & architecture) to ./out
 	go build -ldflags="-X main.version=${VERSION}" -o ./out/${BIN_NAME} .
 
 .PHONY: install
-install: lint ## Build & install dateutil to /usr/local/bin
+install: ## Build & install dateutil to /usr/local/bin
 	go build -ldflags="-X main.version=${VERSION}" -o /usr/local/bin/${BIN_NAME} .
