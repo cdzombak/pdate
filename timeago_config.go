@@ -14,12 +14,12 @@ var CustomEnglishTimeAgo = timeago.Config{
 	FutureSuffix: "",
 
 	Periods: []timeago.FormatPeriod{
-		{time.Second, "about a second", "%d seconds"},
-		{time.Minute, "about a minute", "%d minutes"},
-		{time.Hour, "about an hour", "%d hours"},
-		{timeago.Day, "one day", "%d days"},
-		{timeago.Month, "one month", "%d months"},
-		{timeago.Year, "one year", "%d years"},
+		{D: time.Second, One: "about a second", Many: "%d seconds"},
+		{D: time.Minute, One: "about a minute", Many: "%d minutes"},
+		{D: time.Hour, One: "about an hour", Many: "%d hours"},
+		{D: timeago.Day, One: "one day", Many: "%d days"},
+		{D: timeago.Month, One: "one month", Many: "%d months"},
+		{D: timeago.Year, One: "one year", Many: "%d years"},
 	},
 
 	Zero: "about a second",
