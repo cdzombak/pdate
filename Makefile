@@ -16,10 +16,7 @@ clean: ## Remove built products in ./out
 
 .PHONY: lint
 lint: ## Lint all .go files
-	@for file in ${GO_FILES} ;  do \
-		echo "$$file" ; \
-		golint $$file ; \
-	done
+	golangci-lint run *.go
 
 .PHONY: build
 build: lint ## Build (for the current platform & architecture) to ./out
@@ -27,5 +24,5 @@ build: lint ## Build (for the current platform & architecture) to ./out
 	go build -ldflags="-X main.version=${VERSION}" -o ./out/${BIN_NAME} .
 
 .PHONY: install
-install: ## Build & install dateutil to /usr/local/bin
+install: ## Build & install dateutil to /usr/local/bin, without linting
 	go build -ldflags="-X main.version=${VERSION}" -o /usr/local/bin/${BIN_NAME} .
