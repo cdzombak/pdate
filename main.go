@@ -20,7 +20,7 @@ func main() {
 	} else {
 		val = os.Args[1]
 
-		if val == "-h" || val == "help" || val == "--help" || val == "-v" || val == "version" || val == "--version" {
+		if val == "-h" || val == "-v" || strings.Contains(val, "help") || strings.Contains(val, "version") {
 			fmt.Printf("dateutil %s\n", version)
 			fmt.Println("usage: dateutil [datetime string]")
 			os.Exit(0)
