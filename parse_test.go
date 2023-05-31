@@ -95,4 +95,16 @@ func TestParse(t *testing.T) {
 			t.Errorf("expected %s; got %s", expected, result)
 		}
 	})
+
+	t.Run("unix time (seconds) with decimal", func(t *testing.T) {
+		result, err := Parse("1667421543.4626768")
+		if err != nil {
+			t.Error(err)
+		}
+		result = result.In(utcLoc)
+		expected := time.Date(2022, 11, 2, 20, 39, 3, 462676800, utcLoc)
+		if !result.Equal(expected) {
+			t.Errorf("expected %s; got %s", expected, result)
+		}
+	})
 }
