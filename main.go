@@ -60,7 +60,7 @@ func main() {
 	if val != "" {
 		fmt.Printf(" input:\t%s\n", val)
 		fmt.Printf("parsed:\t%s\n", parsed.Format("2006-01-02 15:04:05 MST"))
-		fmt.Println("       \t(verify this matches your input)")
+		fmt.Println("       \t(verify this matches your input/expectations)")
 	} else {
 		fmt.Println(" input:\tnow")
 	}
