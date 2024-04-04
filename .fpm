@@ -1,0 +1,6 @@
+-s dir
+--name pdate
+--description "Date/time parsing on the CLI"
+--url "https://github.com/cdzombak/pdate"
+--maintainer "Chris Dzombak <https://www.dzombak.com>"
+--license Apache-2.0
