@@ -1,6 +1,6 @@
-# `dateutil`
+# `pdate`
 
-`dateutil` attempts to parse a given date/time stamp string, trying different formats. Once it parses the timestamp, it presents the parsed timestamp in UTC and your local timezone.
+`pdate` attempts to parse a given date/time stamp string, trying different formats. Once it parses the timestamp, it presents the parsed timestamp in UTC and your local timezone.
 
 ## Usage Examples
 
@@ -9,7 +9,7 @@
 #### RFC 3339
 
 ```
-$ dateutil 2022-10-06T17:49:19Z
+$ pdate 2022-10-06T17:49:19Z
  input:	2022-10-06T17:49:19Z
 parsed:	2022-10-06 17:49:19 UTC
        	(verify this matches your input)
@@ -26,7 +26,7 @@ parsed:	2022-10-06 17:49:19 UTC
 #### Unix timestamp
 
 ```
-$ dateutil 1665001628419
+$ pdate 1665001628419
  input:	1665001628419
 parsed:	2022-10-05 16:27:08 EDT
        	(verify this matches your input)
@@ -40,10 +40,10 @@ parsed:	2022-10-05 16:27:08 EDT
 
 [(sample screenshot)](https://github.com/cdzombak/dateutil/blob/main/screenshots/dateutil%20-%20unix%20timestamp.png)
 
-### Get the current date/time in UTC
+### Get the current date/time
 
 ```
-$ dateutil
+$ pdate
  input:	now
 
    UTC:	2022-11-03 3:08:53 PM
@@ -54,14 +54,51 @@ $ dateutil
 
 ## Installation
 
+### macOS via Homebrew
+
+```shell
+brew install cdzombak/oss/pdate
+```
+
+### Debian/Ubuntu and derivatives, via apt repository
+
+Install my Debian repository if you haven't already:
+
+```shell
+sudo apt-get install ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://dist.cdzombak.net/deb.key | sudo gpg --dearmor -o /etc/apt/keyrings/dist-cdzombak-net.gpg
+sudo chmod 0644 /etc/apt/keyrings/dist-cdzombak-net.gpg
+echo -e "deb [signed-by=/etc/apt/keyrings/dist-cdzombak-net.gpg] https://dist.cdzombak.net/deb/oss any oss\n" | sudo tee -a /etc/apt/sources.list.d/dist-cdzombak-net.list > /dev/null
+sudo apt-get update
+```
+
+Then install `pdate` via `apt-get`:
+
+```shell
+sudo apt-get install pdate
+```
+
+### From source
+
 Installation currently requires building from source; a working Go installation is required.
 
-```
-git clone https://github.com/cdzombak/dateutil.git
-cd dateutil
-make install
+```shell
+git clone https://github.com/cdzombak/pdate.git
+cd pdate
+go build -ldflags="-X main.version=${VERSION}" -o /usr/local/bin/pdate .
 ```
 
 ## See Also
 
-- [clock.dzdz.cz](https://clock.dzdz.cz) displays the current time in UTC and your local timezone. [You can also install it using a trivial Electron wrapper.](https://github.com/cdzombak/clock/tree/master/app)
+- [clock.dzdz.cz](https://clock.dzdz.cz) displays the current time in UTC and your local timezone.
+
+## License
+
+Apache 2.0; see LICENSE in this repo.
+
+## Author
+
+Chris Dzombak
+- [dzombak.com](https://www.dzombak.com)
+- [github.com/cdzombak](https://github.com/cdzombak)
