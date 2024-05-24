@@ -107,4 +107,16 @@ func TestParse(t *testing.T) {
 			t.Errorf("expected %s; got %s", expected, result)
 		}
 	})
+
+	t.Run("ULID", func(t *testing.T) {
+		result, err := Parse("01D78XZ44G0000000000000000")
+		if err != nil {
+			t.Error(err)
+		}
+		result = result.In(utcLoc)
+		expected := time.Date(2019, 03, 31, 03, 51, 23, 536000000, utcLoc)
+		if !result.Equal(expected) {
+			t.Errorf("expected %s; got %s", expected, result)
+		}
+	})
 }

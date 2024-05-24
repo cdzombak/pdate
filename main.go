@@ -22,7 +22,7 @@ func main() {
 
 		if val == "-h" || val == "-v" || strings.Contains(val, "help") || strings.Contains(val, "version") {
 			fmt.Printf("dateutil %s\n", version)
-			fmt.Println("usage: dateutil [datetime string]")
+			fmt.Println("usage: dateutil [datetime|ULID string]")
 			os.Exit(0)
 		}
 

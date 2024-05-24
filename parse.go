@@ -8,10 +8,15 @@ import (
 	"time"
 
 	"github.com/araddon/dateparse"
+	"github.com/oklog/ulid/v2"
 )
 
 // Parse attempts to parse the given string into a time.Time.
 func Parse(val string) (time.Time, error) {
+	if ui, err := ulid.Parse(val); err == nil {
+		return ulid.Time(ui.Time()), nil
+	}
+
 	if unixTs, err := strconv.ParseInt(val, 10, 64); err == nil {
 		result := time.Unix(unixTs, 0)
 		if result.Year() > 2070 {

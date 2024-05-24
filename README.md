@@ -1,6 +1,6 @@
 # `pdate`
 
-`pdate` attempts to parse a given date/time stamp string, trying different formats. Once it parses the timestamp, it presents the parsed timestamp in UTC and your local timezone.
+`pdate` attempts to parse a given date/timestamp string, trying different formats. Once it parses the timestamp, it presents the parsed timestamp in UTC and your local timezone.
 
 ## Usage Examples
 
@@ -8,7 +8,7 @@
 
 #### RFC 3339
 
-```
+```text
 $ pdate 2022-10-06T17:49:19Z
  input:	2022-10-06T17:49:19Z
 parsed:	2022-10-06 17:49:19 UTC
@@ -25,7 +25,7 @@ parsed:	2022-10-06 17:49:19 UTC
 
 #### Unix timestamp
 
-```
+```text
 $ pdate 1665001628419
  input:	1665001628419
 parsed:	2022-10-05 16:27:08 EDT
@@ -40,9 +40,24 @@ parsed:	2022-10-05 16:27:08 EDT
 
 [(sample screenshot)](https://github.com/cdzombak/dateutil/blob/main/screenshots/dateutil%20-%20unix%20timestamp.png)
 
+### ULID
+
+```text
+$ pdate "01D78XZ44G0000000000000000"
+ input: 01D78XZ44G0000000000000000
+parsed: 2019-03-30 23:51:23 EDT
+        (verify this matches your input/expectations)
+
+   UTC: 2019-03-31 3:51:23 AM
+        2019-03-31T03:51:23Z
+
+ local: 2019-03-30 11:51:23 PM EDT
+        (2019-03-30 23:51:23 EDT)
+```
+
 ### Get the current date/time
 
-```
+```text
 $ pdate
  input:	now
 
