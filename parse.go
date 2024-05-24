@@ -7,14 +7,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/araddon/dateparse"
+	"github.com/itlightning/dateparse"
 	"github.com/oklog/ulid/v2"
 )
 
-// Parse attempts to parse the given string into a time.Time.
+// Parse attempts to parse the given string into a UTC time.Time.
 func Parse(val string) (time.Time, error) {
 	if ui, err := ulid.Parse(val); err == nil {
-		return ulid.Time(ui.Time()), nil
+		return ulid.Time(ui.Time()).UTC(), nil
 	}
 
 	if unixTs, err := strconv.ParseInt(val, 10, 64); err == nil {
@@ -25,7 +25,7 @@ func Parse(val string) (time.Time, error) {
 		if result.Year() < 1970 {
 			result = time.Unix(0, unixTs)
 		}
-		return result, nil
+		return result.UTC(), nil
 	}
 
 	if _, err := strconv.ParseFloat(val, 64); err == nil {
@@ -53,25 +53,25 @@ func Parse(val string) (time.Time, error) {
 		}
 
 		result := time.Unix(seconds, nanos)
-		return result, nil
+		return result.UTC(), nil
 	}
 
 	if result, err := dateparse.ParseStrict(val); err == nil {
-		return result, err
+		return result.UTC(), err
 	}
 
 	valUpper := strings.ToUpper(val)
-	if result, err := dateparse.ParseStrict(valUpper); err != nil {
-		return result, err
+	if result, err := dateparse.ParseStrict(valUpper); err == nil {
+		return result.UTC(), err
 	}
 
 	var result time.Time
 	if err := result.UnmarshalText([]byte(val)); err == nil {
-		return result, err
+		return result.UTC(), err
 	}
 
 	if err := result.UnmarshalText([]byte(valUpper)); err == nil {
-		return result, err
+		return result.UTC(), err
 	}
 
 	return time.Time{}, errors.New("failed to parse date string")

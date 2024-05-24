@@ -17,7 +17,6 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2022, 10, 5, 19, 59, 25, 644225000, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
@@ -29,7 +28,6 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2022, 9, 21, 9, 52, 19, 0, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
@@ -41,7 +39,6 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2022, 10, 5, 20, 27, 8, 419000000, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
@@ -49,11 +46,12 @@ func TestParse(t *testing.T) {
 	})
 
 	t.Run("2022-10-05T09:10:19 EDT", func(t *testing.T) {
+		t.Skip("location-dependent: https://github.com/itlightning/dateparse?tab=readme-ov-file#timezone-considerations")
+
 		result, err := Parse("2022-10-05T09:10:19 EDT")
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2022, 10, 5, 13, 10, 19, 0, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
@@ -65,7 +63,6 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2022, 10, 5, 20, 27, 8, 0, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
@@ -77,7 +74,6 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2022, 10, 5, 20, 27, 8, 419000000, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
@@ -89,7 +85,6 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2022, 10, 5, 20, 27, 8, 419000123, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
@@ -101,7 +96,6 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2022, 11, 2, 20, 39, 3, 462676800, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
@@ -113,7 +107,6 @@ func TestParse(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		result = result.In(utcLoc)
 		expected := time.Date(2019, 03, 31, 03, 51, 23, 536000000, utcLoc)
 		if !result.Equal(expected) {
 			t.Errorf("expected %s; got %s", expected, result)
