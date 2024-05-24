@@ -72,9 +72,24 @@ jobs:
       is_pull_request: ${{ github.event_name == 'pull_request' }}
       is_running_version_tag_update: ${{ steps.running_version_tag.outputs.is_running_version_tag_update }}
 
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: stable
+      - name: Go version
+        run: go version
+      - name: Run tests
+        run: go test .
+
   binaries:
     name: Binaries & Debian Packages
-    needs: [meta]
+    needs: [meta, test]
     if: needs.meta.outputs.is_running_version_tag_update != 'true'
     runs-on: ubuntu-latest
 
