@@ -40,7 +40,7 @@ parsed:	2022-10-05 16:27:08 EDT
 
 [(sample screenshot)](https://github.com/cdzombak/pdate/blob/main/screenshots/dateutil%20-%20unix%20timestamp.png)
 
-### ULID
+#### ULID
 
 ```text
 $ pdate "01D78XZ44G0000000000000000"
@@ -101,7 +101,7 @@ Installation currently requires building from source; a working Go installation 
 ```shell
 git clone https://github.com/cdzombak/pdate.git
 cd pdate
-go build -ldflags="-X main.version=${VERSION}" -o /usr/local/bin/pdate .
+go build -ldflags="-X main.version=$(./.version.sh)" -o /usr/local/bin/pdate .
 ```
 
 ## See Also
