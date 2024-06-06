@@ -96,7 +96,7 @@ sudo apt-get install pdate
 
 ### From source
 
-Installation currently requires building from source; a working Go installation is required.
+A working Go installation is required.
 
 ```shell
 git clone https://github.com/cdzombak/pdate.git
