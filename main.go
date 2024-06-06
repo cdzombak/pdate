@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 var version = "<dev>"
@@ -15,14 +17,16 @@ func main() {
 	var parsed time.Time
 	var err error
 
+	whiteColor := color.New(color.FgHiWhite, color.Bold)
+
 	if len(os.Args) < 2 {
 		parsed = time.Now()
 	} else {
 		val = os.Args[1]
 
 		if val == "-h" || val == "-v" || strings.Contains(val, "help") || strings.Contains(val, "version") {
-			fmt.Printf("dateutil %s\n", version)
-			fmt.Println("usage: dateutil [datetime|ULID string]")
+			_, _ = whiteColor.Printf("pdate %s\n", version)
+			fmt.Println("usage: pdate [datetime|ULID string]")
 			os.Exit(0)
 		}
 
@@ -40,7 +44,7 @@ func main() {
 		val = strings.TrimSpace(val)
 		parsed, err = Parse(val)
 		if err != nil {
-			fmt.Println("failed to parse input")
+			fmt.Println(color.RedString("failed to parse input"))
 			os.Exit(1)
 		}
 	}
@@ -58,18 +62,22 @@ func main() {
 	parsedUTC := parsed.In(utcLoc)
 
 	if val != "" {
-		fmt.Printf(" input:\t%s\n", val)
-		fmt.Printf("parsed:\t%s\n", parsed.Format("2006-01-02 15:04:05 MST"))
+		fmt.Printf(" %s\t%s\n", whiteColor.Sprint("input:"), val)
+		fmt.Printf("%s\t%s\n", whiteColor.Sprint("parsed:"), parsed.Format("2006-01-02 15:04:05 MST"))
 		fmt.Println("       \t(verify this matches your input/expectations)")
 	} else {
-		fmt.Println(" input:\tnow")
+		fmt.Printf(" %s\tnow\n", whiteColor.Sprint("input:"))
 	}
 	fmt.Println("")
 
-	fmt.Printf("   UTC:\t%s\n", parsedUTC.Format("2006-01-02 3:04:05 PM"))
-	fmt.Printf("       \t%s\n", parsedUTC.Format("2006-01-02T15:04:05Z"))
+	fmt.Printf("   %s\t%s\n", whiteColor.Sprint("UTC:"), parsedUTC.Format("2006-01-02 3:04:05 PM"))
+	fmt.Printf("  %s\t%s\n", whiteColor.Sprint("3339:"), parsedUTC.Format(time.RFC3339))
+	fmt.Printf(" %s\t%s\n", whiteColor.Sprint("1123Z:"), parsedUTC.Format(time.RFC1123Z))
+	fmt.Printf("  %s\t%d\n", whiteColor.Sprint("Unix:"), parsedUTC.Unix())
+	fmt.Printf("       \t%d (millis)\n", parsedUTC.UnixMilli())
+	fmt.Printf("       \t%d (nanos)\n", parsedUTC.UnixNano())
 	fmt.Println("")
-	fmt.Printf(" local:\t%s\n", parsedLocal.Format("2006-01-02 3:04:05 PM MST"))
+	fmt.Printf(" %s\t%s\n", whiteColor.Sprint("local:"), parsedLocal.Format("2006-01-02 3:04:05 PM MST"))
 	if val != "" {
 		fmt.Printf("\t(%s)\n", CustomEnglishTimeAgo.Format(parsed))
 	}
