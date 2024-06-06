@@ -21,7 +21,7 @@ parsed:	2022-10-06 17:49:19 UTC
 	(28 days ago)
 ```
 
-[(sample screenshot)](https://github.com/cdzombak/dateutil/blob/main/screenshots/dateutil%20-%20rfc3339%20timestamp.png)
+[(sample screenshot)](https://github.com/cdzombak/pdate/blob/main/screenshots/dateutil%20-%20rfc3339%20timestamp.png)
 
 #### Unix timestamp
 
@@ -38,7 +38,7 @@ parsed:	2022-10-05 16:27:08 EDT
 	(29 days ago)
 ```
 
-[(sample screenshot)](https://github.com/cdzombak/dateutil/blob/main/screenshots/dateutil%20-%20unix%20timestamp.png)
+[(sample screenshot)](https://github.com/cdzombak/pdate/blob/main/screenshots/dateutil%20-%20unix%20timestamp.png)
 
 ### ULID
 
