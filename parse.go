@@ -18,12 +18,30 @@ func Parse(val string) (time.Time, error) {
 	}
 
 	if unixTs, err := strconv.ParseInt(val, 10, 64); err == nil {
-		result := time.Unix(unixTs, 0)
-		if result.Year() > 2070 {
-			result = time.Unix(0, unixTs*int64(time.Millisecond))
+		// Determine timestamp granularity based on the number of digits:
+		// - 10 digits: seconds (up to year 2286)
+		// - 13 digits: milliseconds
+		// - 16 digits: microseconds
+		// - 19 digits: nanoseconds
+		digits := len(val)
+		if val[0] == '-' || val[0] == '+' {
+			digits-- // Don't count the sign
 		}
-		if result.Year() < 1970 {
+
+		var result time.Time
+		switch {
+		case digits >= 19:
+			// Nanoseconds
 			result = time.Unix(0, unixTs)
+		case digits >= 16:
+			// Microseconds
+			result = time.Unix(0, unixTs*int64(time.Microsecond))
+		case digits >= 13:
+			// Milliseconds
+			result = time.Unix(0, unixTs*int64(time.Millisecond))
+		default:
+			// Seconds
+			result = time.Unix(unixTs, 0)
 		}
 		return result.UTC(), nil
 	}
