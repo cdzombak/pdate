@@ -1,2 +1,4 @@
 .idea/
 out/
+www/pdate.wasm
+www/wasm_exec.js

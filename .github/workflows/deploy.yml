@@ -1,0 +1,64 @@
+---
+name: Deploy
+
+"on":
+  push:
+    branches:
+      - "main"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-www:
+    name: Deploy WWW
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Build WASM
+        run: make wasm
+      - name: Login to Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:github-actions
+      - name: Deploy
+        env:
+          RSYNC_PASSWORD: ${{ secrets.RSYNC_PASSWORD }}
+        run: |
+          rsync -avz --delete ./www/ rsync://wwwdeploy@azul.tailnet-003a.ts.net/pdate.dzdz.cz/
+
+  ntfy:
+    name: Ntfy
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    needs: [deploy-www]
+    steps:
+      - name: Send success notification
+        uses: niniyas/ntfy-action@master
+        if: ${{ !contains(needs.*.result, 'failure') }}
+        with:
+          url: "https://ntfy.cdzombak.net"
+          topic: "dotcom-deploys"
+          priority: 3
+          headers: '{"authorization": "Bearer ${{ secrets.NTFY_TOKEN }}"}'
+          tags: white_check_mark
+          title: ${{ github.event.repository.name }} deployed
+          details: cdzombak/${{ github.event.repository.name }} updated to ${{ github.sha }}
+      - name: Send failure notification
+        uses: niniyas/ntfy-action@master
+        if: ${{ contains(needs.*.result, 'failure') }}
+        with:
+          url: "https://ntfy.cdzombak.net"
+          topic: "gha-builds"
+          priority: 3
+          headers: '{"authorization": "Bearer ${{ secrets.NTFY_TOKEN }}"}'
+          tags: no_entry
+          title: ${{ github.event.repository.name }} deploy failed
+          details: deploy failed for cdzombak/${{ github.event.repository.name }} ${{ github.sha }}
