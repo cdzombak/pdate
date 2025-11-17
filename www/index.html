@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pdate - DateTime Parser</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>pdate</h1>
+            <p class="subtitle">Parse datetime strings and ULIDs</p>
+        </header>
+
+        <main>
+            <div class="input-section">
+                <label for="datetime-input">Enter datetime string or ULID:</label>
+                <div class="input-group">
+                    <input
+                        type="text"
+                        id="datetime-input"
+                        placeholder="e.g., 2024-01-15T10:30:00Z, 1705318200, 01HQVXYZ..."
+                        autofocus
+                    >
+                    <button id="parse-btn">Parse</button>
+                    <button id="clear-btn">Clear</button>
+                </div>
+                <button id="now-btn">Use Current Time</button>
+            </div>
+
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p>Loading WASM module...</p>
+            </div>
+
+            <div id="error" class="error hidden"></div>
+
+            <div id="results" class="results hidden">
+                <div class="result-section">
+                    <h2>Input</h2>
+                    <div class="result-item">
+                        <span class="label">Original:</span>
+                        <span class="value" id="result-input"></span>
+                        <button class="copy-btn" data-copy-target="result-input" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Parsed as:</span>
+                        <span class="value" id="result-parsed"></span>
+                        <button class="copy-btn" data-copy-target="result-parsed" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="verify-text">Please verify this matches your input/expectations</p>
+                </div>
+
+                <div class="result-section">
+                    <h2>UTC</h2>
+                    <div class="result-item">
+                        <span class="label">Formatted:</span>
+                        <span class="value" id="result-utc-formatted"></span>
+                        <button class="copy-btn" data-copy-target="result-utc-formatted" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">RFC3339:</span>
+                        <span class="value" id="result-utc-rfc3339"></span>
+                        <button class="copy-btn" data-copy-target="result-utc-rfc3339" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">RFC1123Z:</span>
+                        <span class="value" id="result-utc-rfc1123z"></span>
+                        <button class="copy-btn" data-copy-target="result-utc-rfc1123z" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Unix (seconds):</span>
+                        <span class="value" id="result-utc-unix"></span>
+                        <button class="copy-btn" data-copy-target="result-utc-unix" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Unix (millis):</span>
+                        <span class="value" id="result-utc-unix-milli"></span>
+                        <button class="copy-btn" data-copy-target="result-utc-unix-milli" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Unix (nanos):</span>
+                        <span class="value" id="result-utc-unix-nano"></span>
+                        <button class="copy-btn" data-copy-target="result-utc-unix-nano" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h2>Local Time</h2>
+                    <div class="result-item">
+                        <span class="label">Formatted:</span>
+                        <span class="value" id="result-local-formatted"></span>
+                        <button class="copy-btn" data-copy-target="result-local-formatted" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="result-item">
+                        <span class="label">Timezone:</span>
+                        <span class="value" id="result-local-timezone"></span>
+                        <button class="copy-btn" data-copy-target="result-local-timezone" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="result-section">
+                    <h2>Relative</h2>
+                    <div class="result-item">
+                        <span class="label">Time ago:</span>
+                        <span class="value" id="result-relative-formatted"></span>
+                        <button class="copy-btn" data-copy-target="result-relative-formatted" title="Copy to clipboard">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by <a href="https://webassembly.org/" target="_blank">WebAssembly</a></p>
+        </footer>
+    </div>
+
+    <script src="wasm_exec.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

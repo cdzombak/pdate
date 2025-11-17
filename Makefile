@@ -12,8 +12,9 @@ help: ## Print help
 all: clean build-linux-amd64 build-linux-arm64 build-linux-armv6 build-darwin-amd64 build-darwin-arm64 ## Build for macOS (amd64, arm64) and Linux (amd64, arm64, armv7, armv6)
 
 .PHONY: clean
-clean: ## Remove build products (./out)
+clean: ## Remove build products (./out) and WASM artifacts
 	rm -rf ./out
+	rm -f www/pdate.wasm www/wasm_exec.js
 
 .PHONY: build
 build: ## Build for the current platform & architecture to ./out
@@ -45,3 +46,25 @@ package: all ## Build all binaries + .deb packages to ./out (requires fpm: https
 	fpm -t deb -v ${BIN_VERSION} -p ./out/${BIN_NAME}-${BIN_VERSION}-amd64.deb -a amd64 ./out/${BIN_NAME}-${BIN_VERSION}-linux-amd64=/usr/bin/${BIN_NAME}
 	fpm -t deb -v ${BIN_VERSION} -p ./out/${BIN_NAME}-${BIN_VERSION}-arm64.deb -a arm64 ./out/${BIN_NAME}-${BIN_VERSION}-linux-arm64=/usr/bin/${BIN_NAME}
 	fpm -t deb -v ${BIN_VERSION} -p ./out/${BIN_NAME}-${BIN_VERSION}-armhf.deb -a armhf ./out/${BIN_NAME}-${BIN_VERSION}-linux-armv6=/usr/bin/${BIN_NAME}
+
+.PHONY: wasm
+wasm: www/pdate.wasm www/wasm_exec.js ## Build WebAssembly binary for web interface
+
+www/pdate.wasm: wasm.go parse.go
+	GOOS=js GOARCH=wasm go build -o www/pdate.wasm wasm.go parse.go
+
+www/wasm_exec.js:
+	@if [ -f "$$(go env GOROOT)/misc/wasm/wasm_exec.js" ]; then \
+		cp "$$(go env GOROOT)/misc/wasm/wasm_exec.js" www/; \
+	elif [ -f "$$(go env GOROOT)/lib/wasm/wasm_exec.js" ]; then \
+		cp "$$(go env GOROOT)/lib/wasm/wasm_exec.js" www/; \
+	else \
+		echo "Error: wasm_exec.js not found in Go installation"; \
+		exit 1; \
+	fi
+
+.PHONY: www/serve
+www/serve: wasm ## Build WASM and serve the web interface on http://localhost:8080
+	@echo "Starting local server on http://localhost:8080"
+	@echo "Press Ctrl+C to stop"
+	@cd www && python3 -m http.server 8080
