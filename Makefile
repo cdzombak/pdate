@@ -50,8 +50,8 @@ package: all ## Build all binaries + .deb packages to ./out (requires fpm: https
 .PHONY: wasm
 wasm: www/pdate.wasm www/wasm_exec.js ## Build WebAssembly binary for web interface
 
-www/pdate.wasm: wasm.go parse.go
-	GOOS=js GOARCH=wasm go build -o www/pdate.wasm wasm.go parse.go
+www/pdate.wasm: wasm.go parse.go timeago_config.go
+	GOOS=js GOARCH=wasm go build -o www/pdate.wasm wasm.go parse.go timeago_config.go
 
 www/wasm_exec.js:
 	@if [ -f "$$(go env GOROOT)/misc/wasm/wasm_exec.js" ]; then \

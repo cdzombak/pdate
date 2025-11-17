@@ -5,10 +5,31 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"syscall/js"
 	"time"
+
+	"github.com/xeonx/timeago"
 )
+
+// WebTimeAgo is the web-specific timeago config with no maximum duration
+var WebTimeAgo = timeago.Config{
+	PastPrefix:   "",
+	PastSuffix:   " ago",
+	FuturePrefix: "in ",
+	FutureSuffix: "",
+
+	Periods: []timeago.FormatPeriod{
+		{D: time.Second, One: "about a second", Many: "%d seconds"},
+		{D: time.Minute, One: "about a minute", Many: "%d minutes"},
+		{D: time.Hour, One: "about an hour", Many: "%d hours"},
+		{D: timeago.Day, One: "one day", Many: "%d days"},
+		{D: timeago.Month, One: "one month", Many: "%d months"},
+		{D: timeago.Year, One: "one year", Many: "%d years"},
+	},
+
+	Zero: "about a second",
+	Max:  100 * timeago.Year, // Effectively unlimited - always show relative time
+}
 
 // parseDate is the WASM-exported function that parses a datetime string
 func parseDate(this js.Value, args []js.Value) interface{} {
@@ -57,101 +78,13 @@ func parseDate(this js.Value, args []js.Value) interface{} {
 		},
 	}
 
-	// Add relative time
-	relativeTime := formatRelativeTime(parsed)
+	// Add relative time using web-specific config (no 13-month limit)
+	relativeTime := WebTimeAgo.Format(parsed)
 	result["relative"] = map[string]interface{}{
 		"formatted": relativeTime,
 	}
 
 	return result
-}
-
-// formatRelativeTime formats a time as a relative string (e.g., "5 minutes ago")
-// This matches the logic from timeago_config.go
-func formatRelativeTime(t time.Time) string {
-	now := time.Now()
-	diff := now.Sub(t)
-
-	const (
-		second = time.Second
-		minute = time.Minute
-		hour   = time.Hour
-		day    = 24 * time.Hour
-		month  = 30 * day
-		year   = 365 * day
-	)
-
-	// Maximum relative time is 13 months
-	maxDuration := 13 * month
-	if diff > maxDuration || diff < -maxDuration {
-		return t.Format("2006-01-02 15:04:05 MST")
-	}
-
-	isPast := diff >= 0
-	if !isPast {
-		diff = -diff
-	}
-
-	var value int
-	var unit string
-
-	switch {
-	case diff < minute:
-		value = int(diff / second)
-		if value <= 1 {
-			unit = "about a second"
-		} else {
-			return formatTimeString(value, "seconds", isPast)
-		}
-	case diff < hour:
-		value = int(diff / minute)
-		if value == 1 {
-			unit = "about a minute"
-		} else {
-			return formatTimeString(value, "minutes", isPast)
-		}
-	case diff < day:
-		value = int(diff / hour)
-		if value == 1 {
-			unit = "about an hour"
-		} else {
-			return formatTimeString(value, "hours", isPast)
-		}
-	case diff < month:
-		value = int(diff / day)
-		if value == 1 {
-			unit = "one day"
-		} else {
-			return formatTimeString(value, "days", isPast)
-		}
-	case diff < year:
-		value = int(math.Round(float64(diff) / float64(month)))
-		if value == 1 {
-			unit = "one month"
-		} else {
-			return formatTimeString(value, "months", isPast)
-		}
-	default:
-		value = int(math.Round(float64(diff) / float64(year)))
-		if value == 1 {
-			unit = "one year"
-		} else {
-			return formatTimeString(value, "years", isPast)
-		}
-	}
-
-	if isPast {
-		return unit + " ago"
-	}
-	return "in " + unit
-}
-
-func formatTimeString(value int, unit string, isPast bool) string {
-	result := fmt.Sprintf("%d %s", value, unit)
-	if isPast {
-		return result + " ago"
-	}
-	return "in " + result
 }
 
 func main() {
