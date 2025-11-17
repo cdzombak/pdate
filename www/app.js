@@ -138,58 +138,50 @@ input.addEventListener('keydown', (e) => {
     }
 });
 
-// Copy to clipboard functionality
-function setupCopyButtons() {
-    document.querySelectorAll('.copy-btn').forEach(button => {
-        button.addEventListener('click', async (e) => {
-            const targetId = button.getAttribute('data-copy-target');
-            const targetElement = document.getElementById(targetId);
+// Copy to clipboard functionality using event delegation
+results.addEventListener('click', async (e) => {
+    const button = e.target.closest('.copy-btn');
+    if (!button) return;
 
-            if (!targetElement) return;
+    const targetId = button.getAttribute('data-copy-target');
+    const targetElement = document.getElementById(targetId);
 
-            const textToCopy = targetElement.textContent;
+    if (!targetElement) return;
 
-            try {
-                await navigator.clipboard.writeText(textToCopy);
+    const textToCopy = targetElement.textContent;
 
-                // Visual feedback
-                button.classList.add('copied');
-                const originalTitle = button.getAttribute('title');
-                button.setAttribute('title', 'Copied!');
+    try {
+        await navigator.clipboard.writeText(textToCopy);
 
-                // Reset after 2 seconds
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                    button.setAttribute('title', originalTitle);
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy:', err);
-                // Fallback for browsers that don't support clipboard API
-                const textArea = document.createElement('textarea');
-                textArea.value = textToCopy;
-                textArea.style.position = 'fixed';
-                textArea.style.left = '-999999px';
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    button.classList.add('copied');
-                    setTimeout(() => button.classList.remove('copied'), 2000);
-                } catch (fallbackErr) {
-                    console.error('Fallback copy failed:', fallbackErr);
-                }
-                document.body.removeChild(textArea);
-            }
-        });
-    });
-}
+        // Visual feedback
+        button.classList.add('copied');
+        const originalTitle = button.getAttribute('title');
+        button.setAttribute('title', 'Copied!');
+
+        // Reset after 2 seconds
+        setTimeout(() => {
+            button.classList.remove('copied');
+            button.setAttribute('title', originalTitle);
+        }, 2000);
+    } catch (err) {
+        console.error('Failed to copy:', err);
+        // Fallback for browsers that don't support clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            button.classList.add('copied');
+            setTimeout(() => button.classList.remove('copied'), 2000);
+        } catch (fallbackErr) {
+            console.error('Fallback copy failed:', fallbackErr);
+        }
+        document.body.removeChild(textArea);
+    }
+});
 
 // Initialize WASM on page load
 initWasm();
-
-// Setup copy buttons after results are displayed
-const originalDisplayResults = displayResults;
-displayResults = function(data) {
-    originalDisplayResults(data);
-    setupCopyButtons();
-};
